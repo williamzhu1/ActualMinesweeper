@@ -23,7 +23,7 @@ public class TileView extends JButton implements ITileStateNotifier {
 
     @Override
     public void notifyOpened(int explosiveNeighbourCount) {
-        System.out.println(explosiveNeighbourCount);
+        //System.out.println(explosiveNeighbourCount);
         super.setIcon(null);
         super.setText((explosiveNeighbourCount> 0)? Integer.toString(explosiveNeighbourCount) : "");
         super.setEnabled(false);

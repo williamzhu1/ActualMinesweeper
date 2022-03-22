@@ -29,13 +29,13 @@ public class Minesweeper extends AbstractMineSweeper{
             height = 8;
             width = 8;
             mine = 10;
-            mine = 0;
 
         }else if(level == Difficulty.MEDIUM){
             //16*16 with 40 mine
             height = 16;
             width = 16;
             mine = 40;
+
 
         }else{
             //16*30 with 99 mine
@@ -54,6 +54,7 @@ public class Minesweeper extends AbstractMineSweeper{
         height = row;
         width = col;
         mine = explosionCount;
+
 
         tiles = new AbstractTile[height][width];
 
