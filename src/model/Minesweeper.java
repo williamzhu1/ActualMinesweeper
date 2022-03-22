@@ -124,6 +124,7 @@ public class Minesweeper extends AbstractMineSweeper{
             return;
         }
         tiles[y][x].flag();
+        System.out.println("xyz");
     }
 
     @Override
