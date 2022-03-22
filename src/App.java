@@ -10,7 +10,6 @@ public class App {
         PlayableMinesweeper model = new Minesweeper();
 
         view.setGameModel(model);
-        //PlayableMinesweeper model = new Minesweeper();
         /**
             Your code to bind your game model to the game user interface
         */

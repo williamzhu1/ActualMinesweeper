@@ -5,6 +5,7 @@ public class Minesweeper extends AbstractMineSweeper{
     int height;
     int width;
     int mine;
+    int flagcount;
 
     AbstractTile[][] tiles;
 
@@ -87,8 +88,14 @@ public class Minesweeper extends AbstractMineSweeper{
         }
         if(tiles[y][x].isFlagged){
             tiles[y][x].unflag();
+            this.viewNotifier.notifyFlagged(x,y);
+            flagcount++;
+            this.viewNotifier.notifyFlagCountChanged(flagcount);
         }else{
             tiles[y][x].flag();
+            this.viewNotifier.notifyUnflagged(x,y);
+            flagcount--;
+            this.viewNotifier.notifyFlagCountChanged(flagcount);
         }
     }
 
@@ -112,9 +119,9 @@ public class Minesweeper extends AbstractMineSweeper{
         if(x < 0 || y < 0 || x >= this.width || y >= this.height){
             return;
         }
-        if(tiles[x][y].isOpened) {
-            tiles[x][y].open();
-            this.viewNotifier.notifyOpened(x,y,0);
+        if(!tiles[y][x].isOpened) {
+            tiles[y][x].open();
+            this.viewNotifier.notifyOpened(x,y,1);
         }
     }
 
