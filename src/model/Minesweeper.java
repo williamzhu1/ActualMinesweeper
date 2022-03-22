@@ -89,12 +89,12 @@ public class Minesweeper extends AbstractMineSweeper{
         if(tiles[y][x].isFlagged){
             tiles[y][x].unflag();
             this.viewNotifier.notifyFlagged(x,y);
-            flagcount++;
+            flagcount--;
             this.viewNotifier.notifyFlagCountChanged(flagcount);
         }else{
             tiles[y][x].flag();
             this.viewNotifier.notifyUnflagged(x,y);
-            flagcount--;
+            flagcount++;
             this.viewNotifier.notifyFlagCountChanged(flagcount);
         }
     }
@@ -131,6 +131,9 @@ public class Minesweeper extends AbstractMineSweeper{
             return;
         }
         tiles[y][x].flag();
+        this.viewNotifier.notifyFlagged(x,y);
+        flagcount++;
+        this.viewNotifier.notifyFlagCountChanged(flagcount);
         System.out.println("xyz");
     }
 
