@@ -30,9 +30,6 @@ public class Minesweeper extends AbstractMineSweeper{
             height = 8;
             width = 8;
             mine = 10;
-            mine = 0;
-
-            tiles = new AbstractTile[8][8];
 
         }else if(level == Difficulty.MEDIUM){
             //16*16 with 40 mine
@@ -40,15 +37,12 @@ public class Minesweeper extends AbstractMineSweeper{
             width = 16;
             mine = 40;
 
-            tiles = new AbstractTile[16][16];
 
         }else{
             //16*30 with 99 mine
             height = 16;
             width = 30;
             mine = 99;
-
-            tiles = new AbstractTile[16][30];
 
         }
 
@@ -61,6 +55,7 @@ public class Minesweeper extends AbstractMineSweeper{
         height = row;
         width = col;
         mine = explosionCount;
+
 
         tiles = new AbstractTile[height][width];
 
@@ -118,9 +113,41 @@ public class Minesweeper extends AbstractMineSweeper{
         if(x < 0 || y < 0 || x >= this.width || y >= this.height){
             return;
         }
-        if(!tiles[y][x].isOpened && !tiles[y][x].isFlagged()) {
+        if(!tiles[y][x].isOpened) {
             tiles[y][x].open();
-            this.viewNotifier.notifyOpened(x,y,1);
+
+            int explosiveNeibourCount = 0;
+            //count the explosiveNeibourCount of a tile
+            boolean right = false;
+            if(x+1 <= this.width-1){
+                right = tiles[y][x+1].isExplosive();
+            }
+            boolean left = false;
+            if(x-1 >= 0){
+                left = tiles[y][x-1].isExplosive();
+            }
+            boolean top = false;
+            if(y-1 >= 0){
+                top = tiles[y-1][x].isExplosive();
+            }
+            boolean bottom = false;
+            if(y+1 <= this.height-1){
+                bottom = tiles[y+1][x].isExplosive();
+            }
+
+            if(right){
+                explosiveNeibourCount+=1;
+            }else if(left){
+                explosiveNeibourCount+=1;
+            }else if(top){
+                explosiveNeibourCount+=1;
+            }else if(bottom){
+                explosiveNeibourCount+=1;
+            }
+
+            this.viewNotifier.notifyOpened(x,y,explosiveNeibourCount);
+
+            //void notifyOpened(int x, int y, int explosiveNeighbourCount);
         }
     }
 
