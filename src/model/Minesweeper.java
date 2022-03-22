@@ -29,29 +29,21 @@ public class Minesweeper extends AbstractMineSweeper{
             //8*8 with 10 mine
             height = 8;
             width = 8;
-            mine = 10;
-            mine = 0;
-
-            tiles = new AbstractTile[8][8];
-
-        }else if(level == Difficulty.MEDIUM){
+            mine = 10; 
+        }
+        else if(level == Difficulty.MEDIUM){
             //16*16 with 40 mine
             height = 16;
             width = 16;
             mine = 40;
 
-            tiles = new AbstractTile[16][16];
-
-        }else{
+        }
+        else{
             //16*30 with 99 mine
             height = 16;
             width = 30;
             mine = 99;
-
-            tiles = new AbstractTile[16][30];
-
         }
-
         this.startNewGame(height, width, mine);
         this.viewNotifier.notifyNewGame(height,width);
     }
