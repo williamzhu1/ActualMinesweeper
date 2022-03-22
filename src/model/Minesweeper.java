@@ -112,9 +112,41 @@ public class Minesweeper extends AbstractMineSweeper{
         if(x < 0 || y < 0 || x >= this.width || y >= this.height){
             return;
         }
-        if(tiles[x][y].isOpened) {
-            tiles[x][y].open();
-            this.viewNotifier.notifyOpened(x,y,0);
+        if(!tiles[y][x].isOpened) {
+            tiles[y][x].open();
+
+            int explosiveNeibourCount = 0;
+            //count the explosiveNeibourCount of a tile
+            boolean right = false;
+            if(x+1 <= this.width-1){
+                right = tiles[y][x+1].isExplosive();
+            }
+            boolean left = false;
+            if(x-1 >= 0){
+                left = tiles[y][x-1].isExplosive();
+            }
+            boolean top = false;
+            if(y-1 >= 0){
+                top = tiles[y-1][x].isExplosive();
+            }
+            boolean bottom = false;
+            if(y+1 <= this.height-1){
+                bottom = tiles[y+1][x].isExplosive();
+            }
+
+            if(right){
+                explosiveNeibourCount+=1;
+            }else if(left){
+                explosiveNeibourCount+=1;
+            }else if(top){
+                explosiveNeibourCount+=1;
+            }else if(bottom){
+                explosiveNeibourCount+=1;
+            }
+
+            this.viewNotifier.notifyOpened(x,y,explosiveNeibourCount);
+
+            //void notifyOpened(int x, int y, int explosiveNeighbourCount);
         }
     }
 
