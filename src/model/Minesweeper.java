@@ -5,6 +5,7 @@ public class Minesweeper extends AbstractMineSweeper{
     int height;
     int width;
     int mine;
+    int flagcount;
 
     AbstractTile[][] tiles;
 
@@ -87,9 +88,14 @@ public class Minesweeper extends AbstractMineSweeper{
         }
         if(tiles[y][x].isFlagged){
             tiles[y][x].unflag();
+            flagcount--;
+            this.viewNotifier.notifyUnflagged(x,y);
         }else{
             tiles[y][x].flag();
+            flagcount++;
+            this.viewNotifier.notifyFlagged(x,y);
         }
+        this.viewNotifier.notifyFlagCountChanged(flagcount);
     }
 
     @Override
@@ -112,26 +118,32 @@ public class Minesweeper extends AbstractMineSweeper{
         if(x < 0 || y < 0 || x >= this.width || y >= this.height){
             return;
         }
-        if(tiles[x][y].isOpened) {
-            tiles[x][y].open();
-            this.viewNotifier.notifyOpened(x,y,0);
+        if(!tiles[y][x].isOpened && !tiles[y][x].isFlagged()) {
+            tiles[y][x].open();
+            this.viewNotifier.notifyOpened(x,y,1);
         }
     }
 
     @Override
     public void flag(int x, int y) {
-        if(x < 0 || y < 0 || x >= this.width || y >= this.height){
+        if(x < 0 || y < 0 || x >= this.width || y >= this.height || tiles[y][x].isFlagged){
             return;
         }
         tiles[y][x].flag();
+        flagcount++;
+        this.viewNotifier.notifyFlagCountChanged(flagcount);
+        this.viewNotifier.notifyFlagged(x,y);
     }
 
     @Override
     public void unflag(int x, int y) {
-        if(x < 0 || y < 0 || x >= this.width || y >= this.height){
+        if(x < 0 || y < 0 || x >= this.width || y >= this.height || !tiles[y][x].isFlagged){
             return;
         }
         tiles[y][x].unflag();
+        flagcount--;
+        this.viewNotifier.notifyFlagCountChanged(flagcount);
+        this.viewNotifier.notifyFlagged(x,y);
     }
 
     @Override
