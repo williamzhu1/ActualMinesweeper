@@ -7,6 +7,7 @@ public class Minesweeper extends AbstractMineSweeper{
     int mine;
     int flagcount;
     int opentiles;
+    int minecount;
 
     AbstractTile[][] tiles;
 
@@ -47,8 +48,11 @@ public class Minesweeper extends AbstractMineSweeper{
 
         }
         opentiles = 0;
+        flagcount = 0;
+        minecount = mine;
         this.startNewGame(height, width, mine);
         this.viewNotifier.notifyNewGame(height,width);
+        this.viewNotifier.notifyMinesLeft(minecount);
     }
 
     @Override
@@ -85,13 +89,16 @@ public class Minesweeper extends AbstractMineSweeper{
         if(tiles[y][x].isFlagged){
             tiles[y][x].unflag();
             flagcount--;
+            minecount ++;
             this.viewNotifier.notifyUnflagged(x,y);
         }else{
             tiles[y][x].flag();
             flagcount++;
+            minecount --;
             this.viewNotifier.notifyFlagged(x,y);
         }
         this.viewNotifier.notifyFlagCountChanged(flagcount);
+        this.viewNotifier.notifyMinesLeft(minecount);
     }
 
     @Override
@@ -207,6 +214,8 @@ public class Minesweeper extends AbstractMineSweeper{
 
             }else{
                 //when the tile is explosive
+                minecount--;
+                this.viewNotifier.notifyMinesLeft(minecount);
                 this.viewNotifier.notifyExploded(x,y);
                 this.viewNotifier.notifyGameLost();
             }
@@ -220,8 +229,10 @@ public class Minesweeper extends AbstractMineSweeper{
         }
         tiles[y][x].flag();
         flagcount++;
+        minecount--;
         this.viewNotifier.notifyFlagCountChanged(flagcount);
         this.viewNotifier.notifyFlagged(x,y);
+        this.viewNotifier.notifyMinesLeft(minecount);
     }
 
     @Override
@@ -231,8 +242,10 @@ public class Minesweeper extends AbstractMineSweeper{
         }
         tiles[y][x].unflag();
         flagcount--;
+        minecount++;
         this.viewNotifier.notifyFlagCountChanged(flagcount);
         this.viewNotifier.notifyFlagged(x,y);
+        this.viewNotifier.notifyMinesLeft(minecount);
     }
 
     @Override
@@ -249,5 +262,9 @@ public class Minesweeper extends AbstractMineSweeper{
     @Override
     public AbstractTile generateExplosiveTile() {
         return new ExplosiveTile();
+    }
+
+    public void timeElapsed(){
+
     }
 }
