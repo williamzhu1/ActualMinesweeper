@@ -6,6 +6,7 @@ public class Minesweeper extends AbstractMineSweeper{
     int width;
     int mine;
     int flagcount;
+    int opentiles;
 
     AbstractTile[][] tiles;
 
@@ -55,6 +56,7 @@ public class Minesweeper extends AbstractMineSweeper{
         height = row;
         width = col;
         mine = explosionCount;
+        opentiles = 0;
 
 
         tiles = new AbstractTile[height][width];
@@ -113,9 +115,25 @@ public class Minesweeper extends AbstractMineSweeper{
         if(x < 0 || y < 0 || x >= this.width || y >= this.height){
             return;
         }
+
+        if(opentiles == 0){
+            if(tiles[y][x].isExplosive()){
+                //removing the explosive tile for the first click
+                tiles[y][x] = generateEmptyTile();
+                //making bomb somewhere else
+                int j = (int)(Math.random() * height);
+                int i = (int)(Math.random() * width);
+
+                if(!tiles[j][i].isExplosive){
+                    tiles[j][i] = generateExplosiveTile();
+                }
+            }
+        }
+
         if(!tiles[y][x].isOpened) {
             tiles[y][x].open();
-//If the tile is not explosive
+            opentiles += 1;
+            //If the tile is not explosive
             if(!tiles[y][x].isExplosive()){
                 int explosiveNeibourCount = 0;
                 //count the explosiveNeibourCount of a tile
@@ -179,6 +197,7 @@ public class Minesweeper extends AbstractMineSweeper{
 
                 this.viewNotifier.notifyOpened(x,y,explosiveNeibourCount);
 
+                //Open neibours
                 if(explosiveNeibourCount == 0){
                     open(x+1,y);
                     open(x+1,y-1);
