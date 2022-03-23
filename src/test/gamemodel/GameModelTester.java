@@ -526,6 +526,11 @@ public class GameModelTester {
             assertTrue("This method shouldn't be invoked in this test", false);       
         }
 
+        @Override
+        public void notifyMinesLeft(int newMineCount) {
+
+        }
+
         public int getInvokedMethodCount() {return invoked;}
         protected void setInvoked() {invoked++;}
 

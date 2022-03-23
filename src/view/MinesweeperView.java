@@ -3,6 +3,7 @@ package view;
 import model.Difficulty;
 import model.PlayableMinesweeper;
 
+import javax.swing.*;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -47,6 +48,7 @@ public class MinesweeperView implements IGameStateNotifier {
     private JPanel flagPanel = new JPanel();
     private JLabel timerView = new JLabel();
     private JLabel flagCountView = new JLabel();
+    private JLabel minesLeft = new JLabel();
 
     public MinesweeperView() {
         this.window = new JFrame("Minesweeper");
@@ -94,6 +96,15 @@ public class MinesweeperView implements IGameStateNotifier {
             flagPanel.add(this.flagCountView);
         } catch (IOException e) {
             System.out.println("Unable to locate flag resource");
+        }
+        try {
+            JLabel clockIcon = new JLabel(new ImageIcon(ImageIO.read(new File(AssetPath.BOMB_ICON))));
+            clockIcon.setSize(new DimensionUIResource(10, 10));
+            flagPanel.add(clockIcon);
+            flagPanel.add(new JLabel("MINES LEFT: "));
+            flagPanel.add(this.minesLeft);
+        } catch (IOException e) {
+            System.out.println("Unable to locate bomb resource");
         }
 
         this.window.setLayout(new GridBagLayout());
@@ -179,11 +190,13 @@ public class MinesweeperView implements IGameStateNotifier {
     @Override
     public void notifyGameLost() {
         this.removeAllTileEvents();
+        JOptionPane.showMessageDialog(window, "Oopsie, bomb went boom boom");
         //throw new UnsupportedOperationException();
     }
     @Override
     public void notifyGameWon() {
         this.removeAllTileEvents();
+        JOptionPane.showMessageDialog(window, "Congratulations you win!");
         //throw new UnsupportedOperationException();
     }
 
@@ -223,6 +236,11 @@ public class MinesweeperView implements IGameStateNotifier {
     @Override
     public void notifyExploded(int x, int y) {
         this.tiles[y][x].notifyExplode();
+    }
+
+    @Override
+    public void notifyMinesLeft(int newMineCount) {
+        this.minesLeft.setText(Integer.toString(newMineCount));
     }
 
 }
