@@ -1,5 +1,8 @@
 package model;
 
+import java.time.Duration;
+import java.time.Instant;
+
 public class Minesweeper extends AbstractMineSweeper{
 
     int height;
@@ -120,14 +123,10 @@ public class Minesweeper extends AbstractMineSweeper{
             if(tiles[y][x].isExplosive()){
                 //removing the explosive tile for the first click
                 tiles[y][x] = generateEmptyTile();
-                //making bomb somewhere else
-                int j = (int)(Math.random() * height);
-                int i = (int)(Math.random() * width);
-
-                if(!tiles[j][i].isExplosive){
-                    tiles[j][i] = generateExplosiveTile();
-                }
+                //add explosive tiles somewhere else
+                deactivateFirstTileRule();
             }
+
         }
 
         if(!tiles[y][x].isOpened) {
@@ -197,7 +196,7 @@ public class Minesweeper extends AbstractMineSweeper{
 
                 this.viewNotifier.notifyOpened(x,y,explosiveNeibourCount);
 
-                //Open neibours
+                //Open neighbours
                 if(explosiveNeibourCount == 0){
                     open(x+1,y);
                     open(x+1,y-1);
@@ -242,7 +241,12 @@ public class Minesweeper extends AbstractMineSweeper{
 
     @Override
     public void deactivateFirstTileRule() {
+        int j = (int)(Math.random() * height);
+        int i = (int)(Math.random() * width);
 
+        if(!tiles[j][i].isExplosive){
+            tiles[j][i] = generateExplosiveTile();
+        }
     }
 
     @Override
@@ -255,4 +259,5 @@ public class Minesweeper extends AbstractMineSweeper{
     public AbstractTile generateExplosiveTile() {
         return new ExplosiveTile();
     }
+
 }
