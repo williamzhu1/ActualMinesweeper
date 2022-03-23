@@ -179,11 +179,21 @@ public class Minesweeper extends AbstractMineSweeper{
 
                 this.viewNotifier.notifyOpened(x,y,explosiveNeibourCount);
 
+                if(explosiveNeibourCount == 0){
+                    open(x+1,y);
+                    open(x+1,y-1);
+                    open(x+1,y+1);
+                    open(x-1,y);
+                    open(x-1,y-1);
+                    open(x-1,y+1);
+                    open(x,y+1);
+                    open(x,y-1);
+                }
+
             }else{
                 //when the tile is explosive
                 this.viewNotifier.notifyExploded(x,y);
             }
-
 
             //void notifyOpened(int x, int y, int explosiveNeighbourCount);
         }
