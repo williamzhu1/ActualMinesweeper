@@ -78,7 +78,7 @@ public class Minesweeper extends AbstractMineSweeper{
 
     @Override
     public void toggleFlag(int x, int y) {
-        if(x < 0 || y < 0 || x >= this.width || y >= this.height){
+        if(x < 0 || y < 0 || x >= this.width || y >= this.height || tiles[y][x].isOpened){
             return;
         }
         if(tiles[y][x].isFlagged){
@@ -191,7 +191,7 @@ public class Minesweeper extends AbstractMineSweeper{
 
     @Override
     public void flag(int x, int y) {
-        if(x < 0 || y < 0 || x >= this.width || y >= this.height || tiles[y][x].isFlagged){
+        if(x < 0 || y < 0 || x >= this.width || y >= this.height || tiles[y][x].isFlagged || tiles[y][x].isOpened){
             return;
         }
         tiles[y][x].flag();
@@ -202,7 +202,7 @@ public class Minesweeper extends AbstractMineSweeper{
 
     @Override
     public void unflag(int x, int y) {
-        if(x < 0 || y < 0 || x >= this.width || y >= this.height || !tiles[y][x].isFlagged){
+        if(x < 0 || y < 0 || x >= this.width || y >= this.height || !tiles[y][x].isFlagged || tiles[y][x].isOpened){
             return;
         }
         tiles[y][x].unflag();
