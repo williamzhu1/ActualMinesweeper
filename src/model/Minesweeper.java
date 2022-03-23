@@ -115,37 +115,75 @@ public class Minesweeper extends AbstractMineSweeper{
         }
         if(!tiles[y][x].isOpened) {
             tiles[y][x].open();
+//If the tile is not explosive
+            if(!tiles[y][x].isExplosive()){
+                int explosiveNeibourCount = 0;
+                //count the explosiveNeibourCount of a tile
+                boolean right = false;
+                if(x+1 <= this.width-1){
+                    right = tiles[y][x+1].isExplosive();
+                }
+                boolean topRight = false;
+                if(x+1 <= this.width-1 && y-1>=0){
+                    topRight = tiles[y-1][x+1].isExplosive();
+                }
+                boolean bottomRight = false;
+                if(x+1 <= this.width-1 && y+1 <= this.height-1){
+                    bottomRight = tiles[y+1][x+1].isExplosive();
+                }
+                boolean left = false;
+                if(x-1 >= 0){
+                    left = tiles[y][x-1].isExplosive();
+                }
+                boolean topLeft = false;
+                if(x-1 >= 0 && y-1>=0){
+                    topLeft = tiles[y-1][x-1].isExplosive();
+                }
+                boolean bottomLeft = false;
+                if(x-1 >= 0 && y+1 <= this.height-1){
+                    bottomLeft = tiles[y+1][x-1].isExplosive();
+                }
+                boolean top = false;
+                if(y-1 >= 0){
+                    top = tiles[y-1][x].isExplosive();
+                }
+                boolean bottom = false;
+                if(y+1 <= this.height-1){
+                    bottom = tiles[y+1][x].isExplosive();
+                }
 
-            int explosiveNeibourCount = 0;
-            //count the explosiveNeibourCount of a tile
-            boolean right = false;
-            if(x+1 <= this.width-1){
-                right = tiles[y][x+1].isExplosive();
-            }
-            boolean left = false;
-            if(x-1 >= 0){
-                left = tiles[y][x-1].isExplosive();
-            }
-            boolean top = false;
-            if(y-1 >= 0){
-                top = tiles[y-1][x].isExplosive();
-            }
-            boolean bottom = false;
-            if(y+1 <= this.height-1){
-                bottom = tiles[y+1][x].isExplosive();
+                if(right) {
+                    explosiveNeibourCount += 1;
+                }
+                if(topRight){
+                    explosiveNeibourCount+=1;
+                }
+                if(bottomRight){
+                    explosiveNeibourCount+=1;
+                }
+                if(left){
+                    explosiveNeibourCount+=1;
+                }
+                if(topLeft){
+                    explosiveNeibourCount+=1;
+                }
+                if(bottomLeft){
+                    explosiveNeibourCount+=1;
+                }
+                if(top){
+                    explosiveNeibourCount+=1;
+                }
+                if(bottom){
+                    explosiveNeibourCount+=1;
+                }
+
+                this.viewNotifier.notifyOpened(x,y,explosiveNeibourCount);
+
+            }else{
+                //when the tile is explosive
+                this.viewNotifier.notifyExploded(x,y);
             }
 
-            if(right){
-                explosiveNeibourCount+=1;
-            }else if(left){
-                explosiveNeibourCount+=1;
-            }else if(top){
-                explosiveNeibourCount+=1;
-            }else if(bottom){
-                explosiveNeibourCount+=1;
-            }
-
-            this.viewNotifier.notifyOpened(x,y,explosiveNeibourCount);
 
             //void notifyOpened(int x, int y, int explosiveNeighbourCount);
         }
