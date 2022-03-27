@@ -1,5 +1,11 @@
 package model;
 
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.time.Duration;
+import java.time.Instant;
+
 public class Minesweeper extends AbstractMineSweeper{
 
     int height;
@@ -7,6 +13,9 @@ public class Minesweeper extends AbstractMineSweeper{
     int mine;
     int flagcount;
     int opentiles;
+    Instant start;
+    Timer t;
+    public Duration duration;
     int minecount;
 
     AbstractTile[][] tiles;
@@ -60,6 +69,8 @@ public class Minesweeper extends AbstractMineSweeper{
         height = row;
         width = col;
         mine = explosionCount;
+        opentiles = 0;
+
 
 
         tiles = new AbstractTile[height][width];
@@ -121,10 +132,36 @@ public class Minesweeper extends AbstractMineSweeper{
         if(x < 0 || y < 0 || x >= this.width || y >= this.height || tiles[y][x].isFlagged){
             return;
         }
+
+        if(opentiles == 0){
+            System.out.println("a");
+            start = Instant.now();
+            t = new Timer(1000, new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    System.out.println("a");
+                    duration = duration.between(start, Instant.now());
+                    viewNotifier.notifyTimeElapsedChanged(duration);
+                }
+            });
+
+            t.start();
+
+            if(tiles[y][x].isExplosive()){
+                //removing the explosive tile for the first click
+                tiles[y][x] = generateEmptyTile();
+                //add explosive tiles somewhere else
+                deactivateFirstTileRule();
+
+            }
+
+        }
+
         if(!tiles[y][x].isOpened) {
             tiles[y][x].open();
+
             opentiles ++;
-//If the tile is not explosive
+          
             if(!tiles[y][x].isExplosive()){
                 int explosiveNeibourCount = 0;
                 //count the explosiveNeibourCount of a tile
@@ -201,6 +238,7 @@ public class Minesweeper extends AbstractMineSweeper{
                     this.viewNotifier.notifyGameWon();
                 }
 
+                //Open neighbours
                 if(explosiveNeibourCount == 0){
                     open(x+1,y);
                     open(x+1,y-1);
@@ -250,7 +288,12 @@ public class Minesweeper extends AbstractMineSweeper{
 
     @Override
     public void deactivateFirstTileRule() {
+        int j = (int)(Math.random() * height);
+        int i = (int)(Math.random() * width);
 
+        if(!tiles[j][i].isExplosive){
+            tiles[j][i] = generateExplosiveTile();
+        }
     }
 
     @Override
@@ -263,8 +306,5 @@ public class Minesweeper extends AbstractMineSweeper{
     public AbstractTile generateExplosiveTile() {
         return new ExplosiveTile();
     }
-
-    public void timeElapsed(){
-
-    }
+  
 }
