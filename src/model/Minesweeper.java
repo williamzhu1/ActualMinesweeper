@@ -16,6 +16,7 @@ public class Minesweeper extends AbstractMineSweeper{
     Instant start;
     Timer t;
     public Duration duration;
+    int minecount;
 
     AbstractTile[][] tiles;
 
@@ -39,7 +40,7 @@ public class Minesweeper extends AbstractMineSweeper{
             //8*8 with 10 mine
             height = 8;
             width = 8;
-            mine = 10;
+            mine = 3;
 
         }else if(level == Difficulty.MEDIUM){
             //16*16 with 40 mine
@@ -55,9 +56,12 @@ public class Minesweeper extends AbstractMineSweeper{
             mine = 99;
 
         }
-
+        opentiles = 0;
+        flagcount = 0;
+        minecount = mine;
         this.startNewGame(height, width, mine);
         this.viewNotifier.notifyNewGame(height,width);
+        this.viewNotifier.notifyMinesLeft(minecount);
     }
 
     @Override
@@ -90,19 +94,22 @@ public class Minesweeper extends AbstractMineSweeper{
 
     @Override
     public void toggleFlag(int x, int y) {
-        if(x < 0 || y < 0 || x >= this.width || y >= this.height){
+        if(x < 0 || y < 0 || x >= this.width || y >= this.height || tiles[y][x].isOpened){
             return;
         }
         if(tiles[y][x].isFlagged){
             tiles[y][x].unflag();
             flagcount--;
+            minecount ++;
             this.viewNotifier.notifyUnflagged(x,y);
         }else{
             tiles[y][x].flag();
             flagcount++;
+            minecount --;
             this.viewNotifier.notifyFlagged(x,y);
         }
         this.viewNotifier.notifyFlagCountChanged(flagcount);
+        this.viewNotifier.notifyMinesLeft(minecount);
     }
 
     @Override
@@ -122,7 +129,7 @@ public class Minesweeper extends AbstractMineSweeper{
 
     @Override
     public void open(int x, int y) {
-        if(x < 0 || y < 0 || x >= this.width || y >= this.height){
+        if(x < 0 || y < 0 || x >= this.width || y >= this.height || tiles[y][x].isFlagged){
             return;
         }
 
@@ -152,12 +159,14 @@ public class Minesweeper extends AbstractMineSweeper{
 
         if(!tiles[y][x].isOpened) {
             tiles[y][x].open();
-            opentiles += 1;
-            //If the tile is not explosive
+
+            opentiles ++;
+          
             if(!tiles[y][x].isExplosive()){
                 int explosiveNeibourCount = 0;
                 //count the explosiveNeibourCount of a tile
                 boolean right = false;
+
                 if(x+1 <= this.width-1){
                     right = tiles[y][x+1].isExplosive();
                 }
@@ -215,7 +224,19 @@ public class Minesweeper extends AbstractMineSweeper{
                     explosiveNeibourCount+=1;
                 }
 
+
                 this.viewNotifier.notifyOpened(x,y,explosiveNeibourCount);
+                System.out.println(opentiles);
+                if(opentiles >= height * width - mine){
+                    for(int j=0; j<height; j++){
+                        for(int i=0; i<width; i++){
+                            if(!tiles[j][i].isOpened && !tiles[j][i].isFlagged){
+                                toggleFlag(i,j);
+                            }
+                        }
+                    }
+                    this.viewNotifier.notifyGameWon();
+                }
 
                 //Open neighbours
                 if(explosiveNeibourCount == 0){
@@ -231,33 +252,38 @@ public class Minesweeper extends AbstractMineSweeper{
 
             }else{
                 //when the tile is explosive
+                minecount--;
+                this.viewNotifier.notifyMinesLeft(minecount);
                 this.viewNotifier.notifyExploded(x,y);
+                this.viewNotifier.notifyGameLost();
             }
-
-            //void notifyOpened(int x, int y, int explosiveNeighbourCount);
         }
     }
 
     @Override
     public void flag(int x, int y) {
-        if(x < 0 || y < 0 || x >= this.width || y >= this.height || tiles[y][x].isFlagged){
+        if(x < 0 || y < 0 || x >= this.width || y >= this.height || tiles[y][x].isFlagged || tiles[y][x].isOpened){
             return;
         }
         tiles[y][x].flag();
         flagcount++;
+        minecount--;
         this.viewNotifier.notifyFlagCountChanged(flagcount);
         this.viewNotifier.notifyFlagged(x,y);
+        this.viewNotifier.notifyMinesLeft(minecount);
     }
 
     @Override
     public void unflag(int x, int y) {
-        if(x < 0 || y < 0 || x >= this.width || y >= this.height || !tiles[y][x].isFlagged){
+        if(x < 0 || y < 0 || x >= this.width || y >= this.height || !tiles[y][x].isFlagged || tiles[y][x].isOpened){
             return;
         }
         tiles[y][x].unflag();
         flagcount--;
+        minecount++;
         this.viewNotifier.notifyFlagCountChanged(flagcount);
         this.viewNotifier.notifyFlagged(x,y);
+        this.viewNotifier.notifyMinesLeft(minecount);
     }
 
     @Override
@@ -280,5 +306,5 @@ public class Minesweeper extends AbstractMineSweeper{
     public AbstractTile generateExplosiveTile() {
         return new ExplosiveTile();
     }
-
+  
 }
