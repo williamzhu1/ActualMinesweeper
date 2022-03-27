@@ -1,5 +1,8 @@
 package model;
 
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.time.Duration;
 import java.time.Instant;
 
@@ -10,6 +13,9 @@ public class Minesweeper extends AbstractMineSweeper{
     int mine;
     int flagcount;
     int opentiles;
+    Instant start;
+    Timer t;
+    public Duration duration;
 
     AbstractTile[][] tiles;
 
@@ -60,6 +66,7 @@ public class Minesweeper extends AbstractMineSweeper{
         width = col;
         mine = explosionCount;
         opentiles = 0;
+
 
 
         tiles = new AbstractTile[height][width];
@@ -120,11 +127,25 @@ public class Minesweeper extends AbstractMineSweeper{
         }
 
         if(opentiles == 0){
+            System.out.println("a");
+            start = Instant.now();
+            t = new Timer(1000, new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    System.out.println("a");
+                    duration = duration.between(start, Instant.now());
+                    viewNotifier.notifyTimeElapsedChanged(duration);
+                }
+            });
+
+            t.start();
+
             if(tiles[y][x].isExplosive()){
                 //removing the explosive tile for the first click
                 tiles[y][x] = generateEmptyTile();
                 //add explosive tiles somewhere else
                 deactivateFirstTileRule();
+
             }
 
         }
