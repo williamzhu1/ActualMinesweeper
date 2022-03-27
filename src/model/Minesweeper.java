@@ -134,12 +134,10 @@ public class Minesweeper extends AbstractMineSweeper{
         }
 
         if(opentiles == 0){
-            System.out.println("a");
             start = Instant.now();
             t = new Timer(1000, new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    System.out.println("a");
                     duration = duration.between(start, Instant.now());
                     viewNotifier.notifyTimeElapsedChanged(duration);
                 }
@@ -226,7 +224,6 @@ public class Minesweeper extends AbstractMineSweeper{
 
 
                 this.viewNotifier.notifyOpened(x,y,explosiveNeibourCount);
-                System.out.println(opentiles);
                 if(opentiles >= height * width - mine){
                     for(int j=0; j<height; j++){
                         for(int i=0; i<width; i++){
@@ -235,6 +232,7 @@ public class Minesweeper extends AbstractMineSweeper{
                             }
                         }
                     }
+                    t.stop();
                     this.viewNotifier.notifyGameWon();
                 }
 
@@ -255,6 +253,7 @@ public class Minesweeper extends AbstractMineSweeper{
                 minecount--;
                 this.viewNotifier.notifyMinesLeft(minecount);
                 this.viewNotifier.notifyExploded(x,y);
+                t.stop();
                 this.viewNotifier.notifyGameLost();
             }
         }
