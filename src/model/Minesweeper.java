@@ -40,7 +40,7 @@ public class Minesweeper extends AbstractMineSweeper{
             //8*8 with 10 mine
             height = 8;
             width = 8;
-            mine = 3;
+            mine = 10;
 
         }else if(level == Difficulty.MEDIUM){
             //16*16 with 40 mine
